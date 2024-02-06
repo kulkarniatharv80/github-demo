@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title> 
+</head>
+<body>
+    <center>
+
+<div class="container">
+    <form id="userForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+
+        <button type="button" id="addButton" onclick="addUser()">Add User</button>
+    </form>
+
+    <table id="userTable" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="userList">
+            <!-- User data will be inserted here dynamically using JavaScript -->
+        </tbody>
+    </table>
+</div>
+</center>
+<script>
+    let users = [];
+
+function addUser() {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+
+    const user = {
+        id: users.length + 1,
+        name: name,
+        email: email
+    };
+
+    users.push(user);
+    displayUsers();
+    resetForm();
+    // window.location.href="table.html";
+}
+
+function editUser(id) {
+    const userToEdit = users.find(user => user.id === id);
+    if (userToEdit) {
+        document.getElementById('name').value = userToEdit.name;
+        document.getElementById('email').value = userToEdit.email;
+
+        // Update the add button to act as an update button
+        const addButton = document.getElementById('addButton');
+        addButton.innerText = 'Update User';
+        addButton.onclick = function() {
+            updateUser(userToEdit.id);
+        };
+    }
+}
+
+function updateUser(id) {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+
+    const updatedUser = {
+        id: id,
+        name: name,
+        email: email
+    };
+
+    // Find the index of the user to update
+    const index = users.findIndex(user => user.id === id);
+
+    // Update the user in the array
+    if (index !== -1) {
+        users[index] = updatedUser;
+        displayUsers();
+        resetForm();
+        resetAddButton();
+    }
+}
+
+function deleteUser(id) {
+    users = users.filter(user => user.id !== id);
+    displayUsers();
+    resetAddButton();
+}
+
+function displayUsers() {
+    const userList = document.getElementById('userList');
+    userList.innerHTML = '';
+
+    users.forEach(user => {
+        const row = userList.insertRow();
+        row.innerHTML = `<td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>
+                            <button onclick="editUser(${user.id})">Edit</button>
+                            <button onclick="deleteUser(${user.id})">Delete</button>
+                        </td>`;
+    });
+}
+
+function resetForm() {
+    document.getElementById('name').value = '';
+    document.getElementById('email').value = '';
+}
+
+function resetAddButton() {
+    const addButton = document.getElementById('addButton');
+    addButton.innerText = 'Add User';
+    addButton.onclick = addUser;
+}
+
+displayUsers(); // Initial display of users
+
+</script>
+</body>
+</html>
